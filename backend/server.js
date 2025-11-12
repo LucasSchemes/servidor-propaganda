@@ -1,36 +1,51 @@
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv'); 
-const connectDB = require('./config/db'); 
-const slideRoutes = require('./routes/slideRoutes'); 
-const { startHeartbeat } = require('./controllers/slideController'); 
-
+const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
+const connectDB = require('./config/database');
+const Slide = require('./models/Slide');
+const slideRoutes = require('./routes/slideRoutes');
+const authRoutes = require('./routes/authRoutes');
+const { startHeartbeat } = require('./controllers/slideController');
+const { protect, admin } = require('./middlewares/authMiddleware');
+const { connectTotem } = require('./controllers/slideController');
 
 dotenv.config();
 connectDB();
 
 const app = express();
-const PORT = process.env.PORT || 4000; 
-app.use(cors());
+const PORT = process.env.PORT || 4000;
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
 
-// --- Rotas da API ---
-// Monta as rotas importadas no prefixo /api
-app.use('/api', slideRoutes);
+setInterval(async () => {
+  try {
+    const result = await Slide.deleteMany({ dataExpiracao: { $lt: new Date() } });
+    if (result.deletedCount > 0) console.log(`${result.deletedCount} slide(s) expirado(s) removido(s).`);
+  } catch (error) {
+    console.error('Erro ao remover slides expirados:', error);
+  }
+}, 3600000);
 
-// Rota de Boas-Vindas (/)
+app.use('/api/auth', authRoutes);
+app.use('/api/slides', protect, admin, slideRoutes);
+app.get('/api/events', connectTotem);
+
 app.get('/', (req, res) => {
-    res.status(200).json({ 
-        message: 'Servidor de Propaganda no ar!',
-        admin_api: '/api/slides',
-        totem_events: '/api/events'
-    });
+  res.status(200).json({
+    message: 'Servidor de Propaganda no ar!',
+    login: '/api/auth/login',
+    admin_api: '/api/slides',
+    totem_events: '/api/events'
+  });
 });
 
-// Inicia o Servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
-  
-  // Inicia o ping de manutenção do SSE
   startHeartbeat();
 });

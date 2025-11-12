@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 dotenv.config({ path: require('path').resolve(__dirname, '../.env') });
 const pepper = process.env.PASSWORD_PEPPER || 'default-pepper-for-dev';
@@ -12,7 +11,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true
   },
-  hashPassword: {
+  passwordHash: {
     type: String,
     required: true,
   },
@@ -37,7 +36,7 @@ userSchema.pre('save', async function (next) {
 
         this.passwordHash = await argon2.hash(password_pepper, {
             type: argon2.argon2id,
-            memoryCost: 2 ** 16, // 64 MB
+            memoryCost: 2 ** 16, 
             timeCost: 3,
             parallelism: 1,
         });
