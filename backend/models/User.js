@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const argon2 = require('argon2');
 
 dotenv.config({ path: require('path').resolve(__dirname, '../.env') });
 const pepper = process.env.PASSWORD_PEPPER || 'default-pepper-for-dev';
