@@ -25,7 +25,7 @@ const registerUser = async (req, res) => {
     const role = count === 0 ? 1 : 0; 
     const user = await User.create({
       username,
-      hashPassword: password, 
+      passwordHash: password, 
       role: role
     });
 
@@ -60,12 +60,26 @@ const loginUser = async (req, res) => {
 
     // Verifica se o usuário existe E se a senha digitada é válida
     if (user && (await user.matchPassword(password))) {
+      
+      // 1. Gera o token
+      const token = generateToken(user._id);
+
+      // 2. SALVA O TOKEN NO COOKIE
+      res.cookie('token', token, {
+        httpOnly: true, // O cookie não pode ser acessado por JS no frontend
+        secure: process.env.NODE_ENV === 'production', // Apenas em HTTPS no ambiente de produção
+        sameSite: 'strict', // Proteção contra ataques CSRF
+        maxAge: 3600000 // 1 hora (deve ser igual ao 'expiresIn' do token)
+      });
+      
+      // 3. Envia a resposta de sucesso
       res.json({
         _id: user._id,
         username: user.username,
         role: user.role,
-        token: generateToken(user._id),
+        message: 'Login bem-sucedido'
       });
+
     } else {
       res.status(401).json({ message: 'Nome de usuário ou senha inválidos.' });
     }

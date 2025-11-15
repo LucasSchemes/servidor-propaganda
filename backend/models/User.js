@@ -29,8 +29,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function (next) {
-    // Se a senha (que agora é 'passwordHash') não foi modificada, retorna
-    if (!this.isModified('hashPassword')) return next();
+    if (!this.isModified('passwordHash')) return next();
     
     try {
         // Usa o Argon2 com o pepper
