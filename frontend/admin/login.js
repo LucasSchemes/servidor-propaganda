@@ -39,7 +39,14 @@ loginButton.addEventListener('click', async () => {
         });
 
         if (response.ok) {
-            window.location.href = 'admin.html';
+            const data = await response.json();
+            if (data.role === 1) {
+                console.log('Login do admin bem-sucedido:', data);
+                window.location.href = 'admin.html';
+            } else {
+                console.log('Login do usuário bem-sucedido:', data);
+                window.location.href = '../index.html';
+            }
         } else {
             const errorData = await response.json();
             showMessage(errorData.message || 'Erro no login.');
