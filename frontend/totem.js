@@ -105,6 +105,11 @@ function mostrarProximoSlide() {
         return;
     }
 
+    // Garante que o índice esteja dentro dos limites do array
+    if (slideIndice >= slidesAtuais.length) {
+        slideIndice = 0;
+    }
+    
     // Armazena o slide atual do array
     const slide = slidesAtuais[slideIndice];
 
@@ -112,10 +117,15 @@ function mostrarProximoSlide() {
     const dataExpiracao = new Date(slide.dataExpiracao);
 
     if (dataExpiracao <= agora) {
-      console.warn(`[!] O slide "${slide.titulo}" (ID: ${slide._id}) expirou e não deve ser exibido.`);
+      console.warn(`[!] O slide "${slide.titulo}" (ID: ${slide._id}) expirou e será removido.`);
       // Remove o slide expirado do array
       slidesAtuais.splice(slideIndice, 1);
 
+      if (slidesAtuais.length === 0) {
+          console.log('[i] Todos os slides expiraram. Aguardando novos slides...');
+          display.innerHTML = '<h1>Aguardando conteúdo...</h1>';
+          return;
+      }
       // O indice do slide não deve ser incrementado
       // Chama imediatamente o próximo slide
       timerId = setTimeout(mostrarProximoSlide, 0); 
