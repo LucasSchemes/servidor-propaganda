@@ -5,9 +5,9 @@ async function sendEventToAllClients() {
     try {
         const slidesValidos = await Slide.find({
             dataExpiracao: { $gt: new Date() } 
-        }).sort({ createdAt: 1 }); // Ordena do mais antigo para o mais novO
+        }).sort({ createdAt: 1 }); // ordena do mais antigo para o mais novo
 
-        // Transforma o array de slides em uma string JSON para envio via SSE
+        // transforma o array de slides em uma string JSON para envio via SSE
         const data = `data: ${JSON.stringify(slidesValidos)}\n\n`;
 
         console.log(`\nEnviando atualização. Slides válidos: ${slidesValidos.length}. Clientes conectados: ${clients.length}`);
@@ -27,7 +27,7 @@ async function sendEventToAllClients() {
     }
 }
 
-//Envia um evento "ping" a cada 15 segundos para manter as conexões SSE ativas
+//envia um evento "ping" a cada 15 segundos para manter as conexões SSE ativas
 
 const startHeartbeat = () => {
     const HEARTBEAT_INTERVAL = 15000; // 15 segundos
@@ -38,16 +38,16 @@ const startHeartbeat = () => {
             try {
                 client.res.write(ping);
             } catch (error) {
-                // Erro ao enviar ping, a conexão provavelmente será fechada no 'close'
+                // erro ao enviar ping, a conexão provavelmente será fechada no 'close'
             }
         });
     }, HEARTBEAT_INTERVAL);
 };
 
 
-// CONTROLADORES DA API (CRUD)
+// CONTROLADOR DOS SLIDES (CRUD)
 
-// CREATE-POST /api/slides
+// função CREATE-POST /api/slides
 const createSlide = async (req, res) => {
   try {
     const { titulo, duracao, conteudoHTML, dataExpiracao } = req.body;
@@ -72,10 +72,9 @@ const createSlide = async (req, res) => {
   }
 };
 
-// READ-GET /api/slides (Para o Admin)
+// função READ-GET /api/slides
 const getAllSlides = async (req, res) => {
   try {
-    // Busca todos, ordenados do mais recente para o mais antigo (melhor para o admin)
     const slides = await Slide.find().sort({ createdAt: -1 });
     res.status(200).json(slides);
   } catch (error) {
@@ -83,7 +82,7 @@ const getAllSlides = async (req, res) => {
   }
 };
 
-// PUT-UPDATE /api/slides/:id
+// função UPDATE-PUT
 const updateSlide = async (req, res) => {
     try {
         const { id } = req.params;
@@ -104,7 +103,7 @@ const updateSlide = async (req, res) => {
     }
 };
 
-// DELETE /api/slides/:id
+// função DELETE
 const deleteSlide = async (req, res) => {
     try {
         const { id } = req.params;
@@ -128,32 +127,32 @@ const deleteSlide = async (req, res) => {
 
 // CONTROLADOR DO TOTEM (SSE)
 
-// GET /api/events
+// função de conexão SSE para o totem
 const connectTotem = async (req, res) => {
   
-  // Configuração dos Headers
+  // configuração dos Headers
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders(); 
   
-  // Armazena a Conexão
+  // armazena a Conexão
   const clientId = Date.now();
   const newClient = {
       id: clientId,
-      res // Armazena o objeto de resposta
+      res // armazena o objeto de resposta
   };
   clients.push(newClient);
   
   console.log(`\n Novo cliente (totem) conectado. Total: ${clients.length}`);
 
-  // Envio Inicial de slides
+  // envia os slides atuais assim que a conexão é estabelecida
   await sendEventToAllClients();
 
   // fechamento da conexão
   req.on('close', () => {
     console.log(`\n Cliente (totem) ID ${clientId} desconectado.`);
-    // Remove o cliente do array quando a conexão é fechada
+    // remove o cliente do array quando a conexão é fechada
     const index = clients.findIndex(c => c.id === clientId);
     if (index !== -1) {
         clients.splice(index, 1);

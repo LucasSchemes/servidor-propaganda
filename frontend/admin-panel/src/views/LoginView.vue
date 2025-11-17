@@ -34,30 +34,24 @@
 </template>
 
 <script setup>
-/* <script setup> é a sintaxe moderna (Composition API) do Vue.
-  Todo código aqui é executado quando o componente é criado.
-*/
+
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-// 1. URLs da API (o backend precisa permitir a porta 5173 no CORS)
+// urls da API de autenticação
 const LOGIN_API_URL = 'http://localhost:4000/api/auth/login';
 const REGISTER_API_URL = 'http://localhost:4000/api/auth/register';
 
-// 2. Variáveis Reativas
-// 'ref()' cria uma variável "reativa". Quando seu valor
-// muda, o Vue atualiza o HTML automaticamente.
+// estados reativos para os campos do formulário e mensagens
 const username = ref('');
 const password = ref('');
-const message = ref(''); // Para exibir erros ou sucesso
-const messageType = ref('error'); // 'error' (vermelho) ou 'success' (verde)
+const message = ref(''); 
+const messageType = ref('error'); 
 
-// 3. Acesso ao Roteador
-// 'useRouter()' nos dá acesso ao roteador que configuramos
-// para que possamos redirecionar o usuário.
+// redirecionamento de rotas
 const router = useRouter();
 
-// 4. Função de Login
+// funcao login
 const handleLogin = async () => {
   if (!username.value || !password.value) {
     message.value = 'Por favor, preencha usuário e senha.';
@@ -65,7 +59,7 @@ const handleLogin = async () => {
     return;
   }
   
-  message.value = ''; // Limpa mensagens antigas
+  message.value = ''; 
 
   try {
     const response = await fetch(LOGIN_API_URL, {
@@ -75,11 +69,11 @@ const handleLogin = async () => {
         username: username.value,
         password: password.value
       }),
-      credentials: 'include' // ESSENCIAL para salvar o cookie de auth
+      credentials: 'include'  // para enviar cookies junto
     });
 
     if (response.ok) {
-      // SUCESSO!
+      // sucesso no login
       const data = await response.json();
       if (data.role === 1) {
         router.push('/admin');
@@ -87,21 +81,21 @@ const handleLogin = async () => {
         window.location.href = 'http://localhost:3000/frontend/index.html';
       }
     } else {
-      // Falha (senha errada, etc.)
+      // falha no login
       const errorData = await response.json();
       message.value = errorData.message || 'Erro no login.';
       messageType.value = 'error';
     }
 
   } catch (error) {
-    // Falha de rede (CORS, servidor offline)
+    // falha de rede 
     console.error('Erro de rede no login:', error);
     message.value = 'Não foi possível conectar ao servidor.';
     messageType.value = 'error';
   }
 };
 
-// 5. Função de Registro
+// registro de novo usuário
 const handleRegister = async () => {
   if (!username.value || !password.value) {
     message.value = 'Para registrar, preencha usuário e senha.';
@@ -109,7 +103,7 @@ const handleRegister = async () => {
     return;
   }
   
-  message.value = ''; // Limpa mensagens antigas
+  message.value = ''; 
 
   try {
     const response = await fetch(REGISTER_API_URL, {
@@ -125,17 +119,17 @@ const handleRegister = async () => {
     const data = await response.json();
 
     if (response.status === 201) {
-      // Sucesso no Registro!
+      // sucesso registro
       message.value = data.message || 'Usuário registrado! Tente fazer login.';
       messageType.value = 'success';
     } else {
-      // Falha no Registro (usuário já existe, etc.)
+      // falha registro
       message.value = data.message || 'Erro ao registrar.';
       messageType.value = 'error';
     }
 
   } catch (error) {
-    // Falha de rede
+    // falha rede
     console.error('Erro de rede no registro:', error);
     message.value = 'Não foi possível conectar ao servidor.';
     messageType.value = 'error';
@@ -144,11 +138,7 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
-/*
-  <style scoped> significa que este CSS se aplica APENAS
-  a este componente (LoginView.vue) e não vaza para outros.
-  Copiamos os estilos do antigo 'admin.css'.
-*/
+
 .login-container {
   width: 100%;
   max-width: 400px;
@@ -156,8 +146,6 @@ const handleRegister = async () => {
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  
-  /* Centraliza na tela (requer que o 'App.vue' dê altura) */
   margin: 10vh auto;
 }
 
@@ -213,7 +201,7 @@ button:hover {
 }
 
 #message-display {
-  margin-bottom: 1rem; /* Acima dos botões */
+  margin-bottom: 1rem; 
   padding: 0.75rem;
   border-radius: 4px;
   text-align: center;

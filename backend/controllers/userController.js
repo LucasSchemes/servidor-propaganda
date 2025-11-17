@@ -7,7 +7,7 @@ const generateToken = (id) => {
   });
 };
 
-// [POST] /api/auth/register - Registra um novo usuário
+// registra um novo usuário
 const registerUser = async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
@@ -20,7 +20,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Nome de usuário já cadastrado.' });
     }
 
-    // O primeiro usuário que se registrar será o Administrador (role: 1)
+    // primeiro usuário que se registrar será o Administrador (role: 1)
     const count = await User.countDocuments({});
     const role = count === 0 ? 1 : 0; 
     const user = await User.create({
@@ -47,7 +47,7 @@ const registerUser = async (req, res) => {
 };
 
 
-// [POST] /api/auth/login - Autentica o usuário
+// autentica o usuário
 const loginUser = async (req, res) => {
   const { username, password } = req.body;
 
@@ -58,21 +58,21 @@ const loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ username });
 
-    // Verifica se o usuário existe E se a senha digitada é válida
+    // verifica se o usuário existe e se a senha digitada é válida
     if (user && (await user.matchPassword(password))) {
       
-      // 1. Gera o token
+      // gera o token
       const token = generateToken(user._id);
 
-      // 2. SALVA O TOKEN NO COOKIE
+      // salva o token em um cookie HTTP-only
       res.cookie('token', token, {
-        httpOnly: true, // O cookie não pode ser acessado por JS no frontend
-        secure: process.env.NODE_ENV === 'production', // Apenas em HTTPS no ambiente de produção
-        sameSite: 'strict', // Proteção contra ataques CSRF
-        maxAge: 3600000 // 1 hora (deve ser igual ao 'expiresIn' do token)
+        httpOnly: true, // não acessível via JavaScript do lado do cliente
+        secure: process.env.NODE_ENV === 'production', // usado apenas em conexões HTTPS em produção
+        sameSite: 'strict', // protege contra CSRF
+        maxAge: 3600000 // 1 hora
       });
       
-      // 3. Envia a resposta de sucesso
+      // loga o usuário
       res.json({
         _id: user._id,
         username: user.username,
