@@ -46,7 +46,7 @@ import { ref, watch } from 'vue'
 // URLs da API
 const API_URL = 'http://localhost:4000/api/slides/slides'
 
-// Props (dados recebidos do AdminView)
+// dados recebidos do AdminView
 const props = defineProps({
   slideParaEditar: {
     type: Object,
@@ -54,7 +54,7 @@ const props = defineProps({
   }
 })
 
-// Emits (eventos enviados para o AdminView)
+// eventos enviados para o AdminView
 const emit = defineEmits(['slide-salvo', 'edicao-cancelada'])
 
 // Estado Reativo
