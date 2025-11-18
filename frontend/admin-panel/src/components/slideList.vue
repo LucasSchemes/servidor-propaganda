@@ -21,7 +21,7 @@
 <script setup>
 import SlideItem from './slideItem.vue'
 
-// 1. Props (recebe a lista de slides do AdminView)
+// recebe a lista de slides do AdminView
 defineProps({
   slides: {
     type: Array,
@@ -29,7 +29,7 @@ defineProps({
   }
 })
 
-// 2. Emits (repassa os eventos para o AdminView)
+// repassa os eventos para o AdminView
 const emit = defineEmits(['editar', 'deletar'])
 </script>
 
