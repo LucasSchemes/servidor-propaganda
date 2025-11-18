@@ -21,23 +21,22 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-// 1. Importa os novos componentes
+// Importa os componentes
 import SlideForm from '../components/slideForm.vue'
 import SlideList from '../components/slideList.vue'
 
-// 2. URLs da API
+// URLs da API
 const API_URL = 'http://localhost:4000/api/slides/slides'
 const LOGOUT_URL = 'http://localhost:4000/api/auth/logout'
 
-// 3. Acesso ao Roteador
+// Acesso ao Roteador
 const router = useRouter()
 
-// 4. Estado Reativo (A "Fonte da Verdade")
-// O AdminView "possui" os dados
+// Estado Reativo
 const slides = ref([])
-const slideParaEditar = ref(null) // 'null' se estiver criando
+const slideParaEditar = ref(null)
 
-// 5. Função para carregar os slides (LER)
+// Função para carregar os slides
 const carregarSlides = async () => {
   try {
     const response = await fetch(API_URL, {
@@ -54,6 +53,7 @@ const carregarSlides = async () => {
       throw new Error('Falha ao carregar slides.')
     }
 
+    // Atualiza a lista de slides com os dados recebidos
     slides.value = await response.json()
     // Limpa o formulário caso uma edição tenha sido concluída
     slideParaEditar.value = null
@@ -62,8 +62,7 @@ const carregarSlides = async () => {
   }
 }
 
-// 6. Função para Deletar (DELETAR)
-// Esta lógica fica aqui, pois o AdminView é o "dono" da lista
+// Função para Deletar
 const handleDelete = async (id) => {
   if (!confirm(`Tem certeza que deseja remover este slide?`)) {
     return
@@ -76,14 +75,15 @@ const handleDelete = async (id) => {
     if (!response.ok) {
       throw new Error('Falha ao deletar o slide.')
     }
-    await carregarSlides() // Recarrega a lista
+    // Recarrega a lista de slides após a deleção
+    await carregarSlides()
   } catch (error) {
     console.error('Erro ao deletar:', error)
     alert(`Erro: ${error.message}`)
   }
 }
 
-// 7. Função de Logout
+// Função de Logout
 const handleLogout = async () => {
   try {
     await fetch(LOGOUT_URL, {
@@ -97,23 +97,18 @@ const handleLogout = async () => {
   }
 }
 
-// 8. Função para preparar a edição
-// Esta função é chamada pelo evento 'editar' do SlideList
+// Função para preparar a edição
 const prepararEdicao = (slide) => {
-  // Apenas muda o 'ref'. O 'watch' no SlideForm fará o resto.
   slideParaEditar.value = slide
 }
 
-// 9. Hook de Ciclo de Vida
+// Hook de Ciclo de Vida
 onMounted(() => {
   carregarSlides()
 })
 </script>
 
 <style scoped>
-/* Os únicos estilos que sobraram são os de "layout",
-  pois os estilos de componente foram movidos para os filhos.
-*/
 .admin-header {
   width: 100%;
   background-color: #333;

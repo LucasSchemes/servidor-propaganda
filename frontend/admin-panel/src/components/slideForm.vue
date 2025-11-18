@@ -43,11 +43,10 @@
 <script setup>
 import { ref, watch } from 'vue'
 
-// 1. URLs da API
+// URLs da API
 const API_URL = 'http://localhost:4000/api/slides/slides'
 
-// 2. Props (Dados recebidos do AdminView)
-// 'slideParaEditar' será preenchido pelo AdminView quando clicarmos em "Editar"
+// Props (dados recebidos do AdminView)
 const props = defineProps({
   slideParaEditar: {
     type: Object,
@@ -55,11 +54,10 @@ const props = defineProps({
   }
 })
 
-// 3. Emits (Eventos enviados para o AdminView)
-// 'defineEmits' nos permite "avisar" o componente pai
+// Emits (eventos enviados para o AdminView)
 const emit = defineEmits(['slide-salvo', 'edicao-cancelada'])
 
-// 4. Estado Reativo (interno do formulário)
+// Estado Reativo
 const formTitle = ref('Criar Novo Slide')
 const editingSlideId = ref(null)
 const form = ref({
@@ -69,10 +67,10 @@ const form = ref({
   conteudoHTML: ''
 })
 
-// 5. Lógica de Salvar
+// Lógica de Salvar
 const handleSave = async () => {
   let url = API_URL
-  let method = 'POST' // Padrão: Criar
+  let method = 'POST'
 
   if (editingSlideId.value) {
     url = `${API_URL}/${editingSlideId.value}`
@@ -92,9 +90,7 @@ const handleSave = async () => {
       throw new Error(errData.message || 'Erro ao salvar slide')
     }
 
-    // Sucesso!
     resetarFormulario()
-    // Avisa o AdminView que um slide foi salvo
     emit('slide-salvo')
   } catch (error) {
     console.error('Erro ao salvar slide:', error)
@@ -102,7 +98,7 @@ const handleSave = async () => {
   }
 }
 
-// 6. Funções Auxiliares
+// Funções Auxiliares
 const resetarFormulario = () => {
   formTitle.value = 'Criar Novo Slide'
   editingSlideId.value = null
@@ -112,13 +108,11 @@ const resetarFormulario = () => {
     dataExpiracao: '',
     conteudoHTML: ''
   }
-  // Avisa o AdminView que a edição foi cancelada
   emit('edicao-cancelada')
 }
 
-// 7. Observador (Watch)
-// Fica "observando" a prop 'slideParaEditar'.
-// Se o AdminView mudar ela, este código roda.
+// Observador
+// Quando 'slideParaEditar' mudar, atualiza o formulário
 watch(
   () => props.slideParaEditar,
   (novoSlide) => {
@@ -139,7 +133,6 @@ watch(
 
       window.scrollTo(0, 0)
     } else {
-      // Se 'null' foi passado, reseta
       resetarFormulario()
     }
   }
@@ -147,7 +140,6 @@ watch(
 </script>
 
 <style scoped>
-/* Estilos do formulário (copiados do AdminView) */
 .form-section {
   flex: 1;
   min-width: 400px;

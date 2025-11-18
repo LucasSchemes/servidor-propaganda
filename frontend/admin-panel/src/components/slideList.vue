@@ -34,7 +34,6 @@ const emit = defineEmits(['editar', 'deletar'])
 </script>
 
 <style scoped>
-/* Estilos da lista (copiados do AdminView) */
 .list-section {
   flex: 2;
   min-width: 400px;

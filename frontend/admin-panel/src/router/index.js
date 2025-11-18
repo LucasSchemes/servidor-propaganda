@@ -5,14 +5,14 @@ import AdminView from '../views/AdminView.vue'
 // rotas do aplicativo
 const routes = [
   {
-    path: '/', // rota login
+    path: '/',
     name: 'login',
-    component: LoginView // componente da view de login
+    component: LoginView // tela de login
   },
   {
-    path: '/admin', //rota admin
+    path: '/admin',
     name: 'admin',
-    component: AdminView // componente da view admin
+    component: AdminView // painel administrativo
   }
 ]
 

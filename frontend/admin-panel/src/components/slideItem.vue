@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-// 1. Props (recebe o slide do SlideList)
+// Props (recebe o slide do SlideList)
 defineProps({
   slide: {
     type: Object,
@@ -21,10 +21,10 @@ defineProps({
   }
 })
 
-// 2. Emits (avisa o SlideList)
+// Emits (avisa o SlideList)
 const emit = defineEmits(['editar', 'deletar'])
 
-// 3. Funções Auxiliares (copiadas do AdminView)
+// Funções Auxiliares
 const formatarData = (dataISO) => {
   return new Date(dataISO).toLocaleString('pt-BR')
 }
@@ -34,7 +34,6 @@ const isExpirado = (dataISO) => {
 </script>
 
 <style scoped>
-/* Estilos do item (copiados do AdminView) */
 .slide-item {
   background: #fff;
   border: 1px solid #eee;
