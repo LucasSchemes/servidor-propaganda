@@ -22,8 +22,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 // 1. Importa os novos componentes
-import SlideForm from '../components/SlideForm.vue'
-import SlideList from '../components/SlideList.vue'
+import SlideForm from '../components/slideForm.vue'
+import SlideList from '../components/slideList.vue'
 
 // 2. URLs da API
 const API_URL = 'http://localhost:4000/api/slides/slides'

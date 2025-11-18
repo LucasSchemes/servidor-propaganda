@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import SlideItem from './SlideItem.vue'
+import SlideItem from './slideItem.vue'
 
 // 1. Props (recebe a lista de slides do AdminView)
 defineProps({
