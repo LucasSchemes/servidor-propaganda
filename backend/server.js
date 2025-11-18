@@ -11,6 +11,7 @@ const authRoutes = require('./routes/authRoutes');
 const { startHeartbeat } = require('./controllers/slideController');
 const { protect, admin } = require('./middlewares/authMiddleware');
 const { connectTotem } = require('./controllers/slideController');
+const { errorHandler } = require('./middlewares/errorHandler');
 
 dotenv.config();
 connectDB();
@@ -25,6 +26,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
+
 
 setInterval(async () => {
   try {
@@ -48,6 +50,7 @@ app.get('/', (req, res) => {
   });
 });
 
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
