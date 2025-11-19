@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-// Props (recebe o slide do SlideList)
+// recebe o slide do SlideList
 defineProps({
   slide: {
     type: Object,
@@ -21,7 +21,7 @@ defineProps({
   }
 })
 
-// Emits (avisa o SlideList)
+// avisa o SlideList
 const emit = defineEmits(['editar', 'deletar'])
 
 // Funções Auxiliares
